@@ -144,7 +144,7 @@ A aplicação é totalmente responsiva e funciona perfeitamente em:
    - **PIS/COFINS**: Alíquota combinada
    - **CIP**: Valor fixo da sua cidade
 
-## 🎯 Bandeiras Tarifárias (ANEEL)
+## 🎯 Bandeiras Tarifárias (ENEL-SP)
 
 | Bandeira | Condição | Acréscimo |
 |----------|----------|-----------|

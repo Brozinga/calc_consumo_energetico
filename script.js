@@ -206,7 +206,7 @@ function loadApplianceData(data) {
         newRow.insertCell().innerHTML = `<input type="text" id="name-${applianceCount}" value="${item.nome || `Aparelho ${applianceCount}`}" class="form-control form-control-sm border-0 p-2 placeholder-color">`;
         
         // kWh/day
-        newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" value="${item.kwh_dia || 0.0}" min="0" step="0.01" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
+        newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" value="${item.kwh_dia || 0.0}" min="0" step="0.001" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
         // Days/month
         newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" value="${item.dias_mes || 30}" min="1" max="31" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
@@ -249,7 +249,7 @@ function addRow() {
     newRow.insertCell().innerHTML = `<input type="text" id="name-${applianceCount}" placeholder="${item.nome}" class="form-control form-control-sm border-0 p-2 placeholder-color">`;
     
     // kWh/day
-    newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" placeholder="${item.kwh_dia}" min="0" step="0.01" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
+    newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" placeholder="${item.kwh_dia}" min="0" step="0.001" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
     // Days/month
     newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" placeholder="${item.dias_mes}" min="1" max="31" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
@@ -286,14 +286,15 @@ function calculateRow(id) {
 
     if (!kwhDayInput || !daysMonthInput) return; // Skip if row removed
 
-    const kwhDay = parseFloat(kwhDayInput.value) || 0;
+    // Converte vírgula para ponto antes do parseFloat
+    const kwhDay = parseFloat(kwhDayInput.value.replace(',', '.')) || 0;
     const daysMonth = parseInt(daysMonthInput.value) || 0;
     const unitCost = calculateUnitCost();
 
     const kwhMonth = kwhDay * daysMonth;
     const costMonth = kwhMonth * unitCost;
 
-    kwhMonthSpan.textContent = kwhMonth.toFixed(2).replace('.', ',');
+    kwhMonthSpan.textContent = kwhMonth.toFixed(3).replace('.', ',');
     costMonthSpan.textContent = `R$ ${costMonth.toFixed(2).replace('.', ',')}`;
 
     updateTotalSummary();
@@ -321,8 +322,8 @@ function updateTotalSummary() {
         const costMonthSpan = document.getElementById(`cost-month-${i}`);
 
         if (kwhDayInput && kwhMonthSpan && costMonthSpan) {
-            // Cálculo kWh/dia total:
-            const kwhDay = parseFloat(kwhDayInput.value) || 0;
+            // Cálculo kWh/dia total (com suporte a vírgula):
+            const kwhDay = parseFloat(kwhDayInput.value.replace(',', '.')) || 0;
             totalKwhDay += kwhDay;
             
             // Cálculo kWh/mês e Custo total:
@@ -339,7 +340,7 @@ function updateTotalSummary() {
 
     // Atualiza o novo campo de Consumo Diário
     document.getElementById('total-kwh-day').innerHTML = `${totalKwhDay.toFixed(3).replace('.', ',')}`;
-    document.getElementById('total-kwh').innerHTML = `${totalKwh.toFixed(2).replace('.', ',')}`;
+    document.getElementById('total-kwh').innerHTML = `${totalKwh.toFixed(3).replace('.', ',')}`;
     document.getElementById('total-cost').innerHTML = `<b>R$ ${totalCost.toFixed(2).replace('.', ',')}</b>`;
     document.getElementById('final-cost').innerHTML = `<b>R$ ${finalCost.toFixed(2).replace('.', ',')}</b>`;
     document.getElementById('final-cip').innerHTML = cipValue.toFixed(2).replace('.', ',');
@@ -446,18 +447,24 @@ function handleFileUpload() {
 // --- Converter (Tab 2) ---
 
 function calculateKwh() {
-    const watts = parseFloat(document.getElementById('input-watts').value) || 0;
-    const hours = parseFloat(document.getElementById('input-hours').value) || 0;
+    const watts = parseFloat(document.getElementById('input-watts').value.replace(',', '.')) || 0;
+    const minutes = parseFloat(document.getElementById('input-hours').value.replace(',', '.')) || 0;
     const days = parseInt(document.getElementById('input-days').value) || 0;
 
-    // Consumo Mensal: (W * h/dia * dias/mês) / 1000
-    const kwhMonth = (watts * hours * days) / 1000;
-    
+    // Converte minutos para horas
+    const hours = minutes / 60;
+
     // Consumo Diário: (W * h/dia) / 1000
     const kwhDay = (watts * hours) / 1000;
     
+    // Arredonda o consumo diário para 3 casas decimais (como seria digitado na Lista)
+    const kwhDayRounded = Math.round(kwhDay * 1000) / 1000;
+    
+    // Consumo Mensal: usa o valor arredondado multiplicado pelos dias
+    const kwhMonth = kwhDayRounded * days;
+    
     document.getElementById('output-kwh').textContent = kwhMonth.toFixed(3).replace('.', ',');
-    document.getElementById('output-kwh-day').textContent = kwhDay.toFixed(3).replace('.', ',');
+    document.getElementById('output-kwh-day').textContent = kwhDayRounded.toFixed(3).replace('.', ',');
 }
 
 // --- Initialization ---

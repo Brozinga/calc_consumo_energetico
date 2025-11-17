@@ -106,7 +106,7 @@
 
         <!-- Data Import/Export Buttons (Customizado) -->
         <div class="bg-light p-4 rounded border border-secondary-subtle shadow-sm mb-4">
-            <h3 class="h6 fw-semibold text-secondary mb-3">Configuração de Dados (JSON)</h3>
+            <h3 class="h6 fw-semibold text-secondary mb-3">Importação/Exportação da calculadora (taxas, aparelhos e etc).</h3>
             <div class="d-flex flex-wrap gap-3">
                 
                 <!-- Botão 1: Download Template -->
@@ -136,7 +136,7 @@
                     <tr>
                         <th class="p-3 text-start col-aparelho">Aparelho</th>
                         <th class="p-3 text-center col-kwh-dia">Consumo (kWh/dia)</th>
-                        <th class="p-3 text-center col-dias-mes">Dias/Mês</th>
+                        <th class="p-3 text-center col-dias-mes">Dias de Uso (Mês)</th>
                         <th class="p-3 text-center col-kwh-mes">kWh/Mês</th>
                         <th class="p-3 text-center col-custo">Custo (R$/Mês)</th>
                     </tr>
@@ -204,8 +204,8 @@
                 </div>
                 
                 <div class="col-12 mb-3">
-                    <label for="input-hours" class="form-label fw-medium text-secondary">Horas de Uso por Dia (h/dia):</label>
-                    <input type="number" id="input-hours" placeholder="Ex: 0.5 (30 minutos)" oninput="calculateKwh()" class="form-control">
+                    <label for="input-hours" class="form-label fw-medium text-secondary">Minutos de Uso por Dia (min/dia):</label>
+                    <input type="number" id="input-hours" placeholder="Ex: 60 (1 hora)" oninput="calculateKwh()" class="form-control">
                 </div>
                 
                 <div class="col-12 mb-3">
@@ -232,7 +232,7 @@
                     <div class="mt-4 pt-4 border-top border-secondary-subtle w-100 text-center">
                         <p class="small text-muted mb-1">Fórmula utilizada: </p>
                         <p class="small font-monospace bg-light border d-inline-block px-2 py-1 rounded">
-                            (W * h/dia * dias/mês) / 1000
+                            (W * min/dia * dias/mês) / 1000 / 60
                         </p>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
     
     <!-- TAB 3: Explanation Guide (Guia de Uso) -->
     <div id="tab3" class="p-4 p-md-5 d-none">
-        <h2 class="h5 fw-semibold text-primary border-bottom pb-2 mb-4">3. Guia de Uso: Entenda a Fatura e os Dados JSON</h2>
+        <h2 class="h5 fw-semibold text-primary border-bottom pb-2 mb-4">3. Guia de Uso da aplicação</h2>
         
         <p class="mb-4">Esta guia oferece suporte para extrair os dados corretos da sua fatura e para manipular os arquivos de importação/exportação JSON.</p>
         
@@ -373,6 +373,158 @@
                             <li><span class="material-symbols-placeholder">🏷️</span> <strong>"nome":</strong> O nome descritivo do seu aparelho.</li>
                             <li><span class="material-symbols-placeholder">⚡</span> <strong>"kwh_dia":</strong> O consumo diário (kWh) do aparelho.</li>
                             <li><span class="material-symbols-placeholder">📅</span> <strong>"dias_mes":</strong> O número de dias no mês que o aparelho é utilizado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 3: Como Usar o Conversor Watts → kWh -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed fw-bold text-blue-700" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        <span class="material-symbols-placeholder">⚡</span> 3. Como Usar o Conversor de Watts para kWh
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionFatura">
+                    <div class="accordion-body">
+                        <p class="mb-3">O conversor de Watts para kWh é uma ferramenta essencial para descobrir quanto seus aparelhos consomem de energia quando você só conhece a potência deles.</p>
+                        
+                        <h6 class="fw-semibold mt-3">📋 Passo a Passo:</h6>
+                        <ol class="small mb-3">
+                            <li><strong>Acesse a aba</strong>: "2. Conversor Watts → kWh"</li>
+                            <li><strong>Encontre a potência</strong>: Procure a etiqueta ou manual do aparelho para encontrar a potência em Watts (W)</li>
+                            <li><strong>Estime o uso diário</strong>: Pense em quantos minutos por dia o aparelho fica ligado</li>
+                            <li><strong>Defina os dias de uso</strong>: Quantos dias por mês você usa o aparelho</li>
+                            <li><strong>Veja o resultado</strong>: O consumo aparecerá automaticamente em kWh/mês</li>
+                        </ol>
+
+                        <h6 class="fw-semibold mt-3">🧮 Como Funciona a Fórmula:</h6>
+                        <div class="bg-light p-3 rounded mb-3">
+                            <p class="mb-2 text-center"><strong>Consumo (kWh/mês) = (Potência em W × Minutos/dia × Dias/mês) ÷ 1000 ÷ 60</strong></p>
+                            <p class="small text-muted mb-0 text-center">Dividimos por 1000 para converter Watts em quilowatts (kW) e por 60 para converter minutos em horas</p>
+                        </div>
+
+                        <h6 class="fw-semibold mt-3">📱 Exemplo Prático - Chuveiro Elétrico:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered small">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Potência</strong></td>
+                                        <td>5500 W</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Uso diário</strong></td>
+                                        <td>30 minutos</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dias por mês</strong></td>
+                                        <td>30 dias</td>
+                                    </tr>
+                                    <tr class="table-primary">
+                                        <td><strong>Resultado</strong></td>
+                                        <td><strong>(5500 × 30 × 30) ÷ 1000 ÷ 60 = 82,5 kWh/mês</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="alert alert-info small mt-3">
+                            <span class="material-symbols-placeholder">💡</span> <strong>Dica Importante:</strong> Depois de calcular no conversor, você pode usar esse valor de kWh/mês para adicionar o aparelho na calculadora principal!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4: Como Preencher a Lista de Aparelhos -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed fw-bold text-blue-700" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        <span class="material-symbols-placeholder">📊</span> 4. Como Preencher a Lista de Aparelhos para Cálculo Mensal
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionFatura">
+                    <div class="accordion-body">
+                        <p class="mb-3">A tabela de aparelhos é onde você adiciona todos os seus equipamentos elétricos para calcular o gasto total mensal.</p>
+
+                        <h6 class="fw-semibold mt-3">📋 Campos da Tabela:</h6>
+                        <dl class="row small mb-3">
+                            <dt class="col-sm-4">Nome do Aparelho</dt>
+                            <dd class="col-sm-8">Um nome descritivo para identificar o equipamento<br>
+                                <em>Exemplos: "Geladeira Principal", "TV Sala", "Ar Condicionado Quarto"</em>
+                            </dd>
+                            
+                            <dt class="col-sm-4">Consumo (kWh/dia)</dt>
+                            <dd class="col-sm-8">Quanto o aparelho consome por dia<br>
+                                <em>• Use o conversor Watts→kWh se só souber a potência<br>
+                                • Consulte etiquetas de eficiência energética quando disponível</em>
+                            </dd>
+                            
+                            <dt class="col-sm-4">Dias de Uso/Mês</dt>
+                            <dd class="col-sm-8">Quantos dias no mês o aparelho é usado<br>
+                                <em>• Aparelhos que ficam ligados sempre: 30 dias<br>
+                                • Aparelhos sazonais: varie conforme a época<br>
+                                • Aparelhos de uso eventual: estime realisticamente</em>
+                            </dd>
+                        </dl>
+
+                        <h6 class="fw-semibold mt-3">🏠 Exemplos de Aparelhos Comuns:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped small">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Aparelho</th>
+                                        <th>Potência Típica</th>
+                                        <th>Uso Diário</th>
+                                        <th>Consumo Estimado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Geladeira</td>
+                                        <td>130-180W</td>
+                                        <td>24h (sempre ligada)</td>
+                                        <td>3,1-4,3 kWh/dia</td>
+                                    </tr>
+                                    <tr>
+                                        <td>TV LED 40"</td>
+                                        <td>80-120W</td>
+                                        <td>6h</td>
+                                        <td>0,5-0,7 kWh/dia</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ar Condicionado 12.000 BTU</td>
+                                        <td>1000-1500W</td>
+                                        <td>8h</td>
+                                        <td>8-12 kWh/dia</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chuveiro Elétrico</td>
+                                        <td>5500W</td>
+                                        <td>30min</td>
+                                        <td>2,75 kWh/dia</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Micro-ondas</td>
+                                        <td>1200W</td>
+                                        <td>15min</td>
+                                        <td>0,3 kWh/dia</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Máquina de Lavar</td>
+                                        <td>500W</td>
+                                        <td>1h (3x/semana)</td>
+                                        <td>0,5 kWh (dias de uso)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h6 class="fw-semibold mt-3">⚡ Dicas para Preenchimento Preciso:</h6>
+                        <ul class="small">
+                            <li><strong>Para aparelhos 24h:</strong> Geladeira, freezer → 30 dias de uso</li>
+                            <li><strong>Para climatização:</strong> Considere apenas meses de uso (verão/inverno)</li>
+                            <li><strong>Para eletrodomésticos:</strong> Estime uso real semanal e multiplique</li>
+                            <li><strong>Use etiquetas INMETRO:</strong> Consulte o consumo em kWh/mês quando disponível</li>
                         </ul>
                     </div>
                 </div>
