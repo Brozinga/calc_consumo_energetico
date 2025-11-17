@@ -100,27 +100,38 @@ body {
 
 /* Definição de Largura das Colunas para otimização */
 .col-aparelho { 
-    min-width: 150px; 
+    width: 25%;
+    min-width: 200px; 
 }
 
 .col-kwh-dia { 
-    width: 15%; 
-    min-width: 120px; 
+    width: 12%; 
+    min-width: 100px; 
 } /* Coluna Consumo (kWh/dia) otimizada */
 
 .col-dias-mes { 
-    width: 10%; 
-    min-width: 100px; 
+    width: 8%; 
+    min-width: 80px; 
 }
 
 .col-kwh-mes { 
-    width: 15%; 
-    min-width: 120px; 
+    width: 12%; 
+    min-width: 100px; 
+}
+
+.col-bandeira { 
+    width: 12%; 
+    min-width: 100px; 
+}
+
+.col-cip { 
+    width: 12%; 
+    min-width: 100px; 
 }
 
 .col-custo { 
-    width: 20%; 
-    min-width: 140px; 
+    width: 19%; 
+    min-width: 120px; 
 }
 
 .placeholder-color::placeholder {
@@ -131,10 +142,34 @@ input.form-control, .dropdown, .mh-40, #bandeira-select-display {
     min-height: 40px;
 }
 
+/* Otimização dos campos da tabela */
+.col-aparelho input {
+    width: 100%;
+    min-width: 180px;
+}
+
+.col-kwh-dia input,
+.col-dias-mes input {
+    text-align: center;
+    width: 100%;
+    max-width: 80px;
+}
+
 /* Estilo para que o campo label fique na sua própria linha em dispositivos móveis */
 @media (max-width: 767px) {
     .form-label {
         display: block; 
         margin-bottom: 0.25rem;
+    }
+    
+    /* Em mobile, reduz ainda mais os campos numéricos */
+    .col-kwh-dia, .col-dias-mes {
+        width: 10%;
+        min-width: 70px;
+    }
+    
+    .col-aparelho {
+        width: 35%;
+        min-width: 150px;
     }
 }

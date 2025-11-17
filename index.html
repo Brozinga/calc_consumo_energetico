@@ -68,13 +68,13 @@
                             <li><a class="dropdown-item" href="#" data-value="0.00000" data-label="Verde" data-color="bg-success" onclick="selectBandeira(this, event)">
                                 <span><span class="flag-indicator bg-success me-2"></span> Verde</span>
                             </a></li>
-                            <li><a class="dropdown-item" href="#" data-value="0.02989" data-label="Amarela" data-color="bg-warning" onclick="selectBandeira(this, event)">
+                            <li><a class="dropdown-item" href="#" data-value="0.01885" data-label="Amarela" data-color="bg-warning" onclick="selectBandeira(this, event)">
                                 <span><span class="flag-indicator bg-warning me-2"></span> Amarela</span>
                             </a></li>
-                            <li><a class="dropdown-item" href="#" data-value="0.06500" data-label="Vermelha P1" data-color="bg-danger" onclick="selectBandeira(this, event)">
+                            <li><a class="dropdown-item" href="#" data-value="0.04463" data-label="Vermelha P1" data-color="bg-danger" onclick="selectBandeira(this, event)">
                                 <span><span class="flag-indicator bg-danger me-2"></span> Vermelha P1</span>
                             </a></li>
-                            <li><a class="dropdown-item" href="#" data-value="0.07800" data-label="Vermelha P2" data-color="bg-danger" onclick="selectBandeira(this, event)">
+                            <li><a class="dropdown-item" href="#" data-value="0.07877" data-label="Vermelha P2" data-color="bg-danger" onclick="selectBandeira(this, event)">
                                 <span><span class="flag-indicator bg-danger me-2"></span> Vermelha P2</span>
                             </a></li>
                         </ul>
@@ -86,15 +86,34 @@
                 <!-- CIP and Impostos (NOW EDITABLE) -->
                 <div class="col-12 col-md-3">
                     <label class="form-label fw-medium text-secondary">CIP (R$ fixo):</label>
-                    <input type="number" id="cip-value" class="form-control form-control-sm">
+                    <input type="number" id="cip-value" step="0.01" oninput="updateTariff()" class="form-control form-control-sm">
                 </div>
                 <div class="col-12 col-md-3">
                     <label class="form-label fw-medium text-secondary">ICMS (%):</label>
                     <input type="number" id="icms-rate" step="0.01" oninput="updateTariff()" class="form-control form-control-sm">
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="checkbox" id="icms-isento" onchange="updateTariff()">
+                        <label class="form-check-label small text-muted" for="icms-isento">
+                            Isento ou (já embutido nas tarifas)
+                        </label>
+                    </div>
                 </div>
                 <div class="col-12 col-md-3">
                     <label class="form-label fw-medium text-secondary">PIS/COFINS (%):</label>
                     <input type="number" id="pis-cofins-rate" step="0.01" oninput="updateTariff()" class="form-control form-control-sm">
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="checkbox" id="pis-cofins-isento" onchange="updateTariff()" checked>
+                        <label class="form-check-label small text-muted" for="pis-cofins-isento">
+                            Isento ou (já embutido nas tarifas)
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Observação sobre tributos -->
+                <div class="col-12">
+                    <div class="alert alert-info small mb-0">
+                        <strong>ℹ️ Dica:</strong> Se os valores TUSD e TE inseridos já são "com tributos" (conforme conta da Enel SP), marque ambos checkboxes "ISENTO".
+                    </div>
                 </div>
             </div>
             
@@ -129,7 +148,7 @@
         
         <!-- Appliance List -->
         <h2 class="h5 fw-semibold text-primary">Lista de Aparelhos para Cálculo Mensal</h2>
-        
+
         <div class="table-responsive table-responsive-scroll">
             <table class="table table-striped table-hover small bg-white rounded-3 shadow">
                 <thead class="table-primary sticky-top" style="top: -1px;">
@@ -138,7 +157,8 @@
                         <th class="p-3 text-center col-kwh-dia">Consumo (kWh/dia)</th>
                         <th class="p-3 text-center col-dias-mes">Dias de Uso (Mês)</th>
                         <th class="p-3 text-center col-kwh-mes">kWh/Mês</th>
-                        <th class="p-3 text-center col-custo">Custo (R$/Mês)</th>
+                        <th class="p-3 text-center col-bandeira">Bandeira (R$/Mês)</th>
+                        <th class="p-3 text-center col-custo">Custo Total (R$/Mês)</th>
                     </tr>
                 </thead>
                 <tbody id="appliance-list">
@@ -146,7 +166,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" class="p-3 text-center">
+                        <td colspan="6" class="p-3 text-center">
                             <button onclick="addRow()" class="btn btn-success btn-sm rounded-pill fw-medium shadow-sm">
                                 <span class="material-symbols-placeholder">+</span> Adicionar Aparelho
                             </button>
@@ -155,7 +175,13 @@
                 </tfoot>
             </table>
         </div>
-
+        <br/>
+                        <!-- Observação sobre tributos -->
+                <div class="col-12">
+                    <div class="alert alert-warning small mb-0">
+                        <strong>⚠️ Atenção:</strong> O CIP é uma taxa fixa mensal da prefeitura cobrada separadamente. Para removê-lo dos cálculos, zere o campo "CIP (R$/mês)" nas configurações de tarifas.
+                    </div>
+                </div>
 <!-- Monthly Summary -->
 <div class="d-flex justify-content-end pt-4">
     <div class="w-100 w-md-50 p-4 bg-primary-subtle rounded-3 border border-primary-light">
@@ -174,7 +200,7 @@
         
         <!-- ITEM: Custo Total dos Aparelhos (R$) -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 fw-semibold text-secondary">
-            <span>Custo Total dos Aparelhos (R$):</span>
+            <span>Custo Total dos Aparelhos:</span>
             <span id="total-cost" class="text-primary fs-5 fw-bold text-md-end">R$ 0,00</span>
         </div>
         
@@ -186,7 +212,7 @@
             <span id="final-cost" class="text-primary fs-4 fw-bolder text-md-end">R$ 15,93</span>
         </div>
         
-        <p class="small text-muted text-end mb-0">CIP de R$ <span id="final-cip">15.93</span> incluso no total.</p>
+        <p class="small text-muted text-end mb-0">CIP de R$ <span id="final-cip">15.93</span> cobrado uma única vez no total.</p>
     </div>
 </div>
     </div>
@@ -313,11 +339,26 @@
                         <ul class="list-group list-group-flush small mb-3">
                             <li class="list-group-item">
                                 <strong>ICMS:</strong> Imposto Estadual. A alíquota é encontrada na coluna **Alíquota (%)**. Varia conforme o consumo total da residência (ex: 18% para consumo acima de 200 kWh).
+                                <div class="alert alert-warning small mt-2 mb-0">
+                                    <strong>⚠️ Importante:</strong> Se sua conta mostra "ICMS R$ 0,00" ou valor zerado, você tem <strong>isenção de ICMS</strong>. Marque o checkbox "Isenção de ICMS" na calculadora.
+                                </div>
                             </li>
                             <li class="list-group-item">
-                                <strong>PIS/COFINS:</strong> Impostos Federais. Use a alíquota efetiva combinada mostrada na coluna **Alíquota (%)**.
+                                <strong>PIS/COFINS:</strong> Impostos Federais. Use a alíquota efetiva combinada mostrada na coluna **Alíquota (%)**. Se você tem isenção de ICMS, geralmente estes impostos também são zerados.
                             </li>
                         </ul>
+
+                        <h6 class="fw-semibold mt-3">🆓 Como Identificar Isenção de ICMS:</h6>
+                        <div class="bg-light p-3 rounded mb-3">
+                            <p class="small mb-2"><strong>Verifique na sua conta:</strong></p>
+                            <ul class="small mb-2">
+                                <li>Valor do ICMS aparece como <strong>R$ 0,00</strong></li>
+                                <li>Pode haver uma linha com "DESC. ICMS" (desconto de ICMS)</li>
+                                <li>PIS/COFINS também podem estar zerados</li>
+                                <li>Total da conta = TUSD + TE + Bandeiras + CIP (sem impostos)</li>
+                            </ul>
+                            <p class="small mb-0 text-success"><strong>✅ Se encontrar estes sinais, ative o checkbox "Isenção de ICMS" na calculadora!</strong></p>
+                        </div>
 
                          <h6 class="fw-semibold mt-3">CIP (R$ Fixo) 🏙️</h6>
                         <p class="small">A Contribuição de Iluminação Pública (CIP) é um valor fixo da prefeitura, encontrado na linha **CIP - [SEU MUNICÍPIO]** e adicionado no total final da sua conta. Deve ser inserido no campo "CIP (R$ fixo)".</p>
@@ -346,21 +387,25 @@
 
                         <h6 class="mt-4 fw-bold">Exemplo da Estrutura <code class="text-danger">"tarifas"</code>:</h6>
                         <pre class="bg-light p-2 rounded small"><code>{
-  "tusd_base": 0.56068,
-  "te_base": 0.37950,
-  "bandeira": "Vermelha P2", 
+  "tusd_base": 0.45893,
+  "te_base": 0.30982,
+  "bandeira": "Verde", 
   "cip_value": 15.93,
-  "icms_rate": 18,
-  "pis_cofins_rate": 5.96
+  "icms_rate": 18.00,
+  "icms_isento": true,
+  "pis_cofins_rate": 6.13,
+  "pis_cofins_isento": true
 }</code></pre>
 
                         <ul class="list-unstyled small">
                             <li><span class="material-symbols-placeholder">📈</span> <strong>"tusd_base":</strong> Valor da Tarifa de Uso do Sistema de Distribuição (R$/kWh).</li>
                             <li><span class="material-symbols-placeholder">⚡</span> <strong>"te_base":</strong> Valor da Tarifa de Energia (R$/kWh).</li>
                             <li><span class="material-symbols-placeholder">🚩</span> <strong>"bandeira":</strong> Nome da bandeira tarifária (Ex: "Verde", "Amarela", "Vermelha P2").</li>
-                            <li><span class="material-symbols-placeholder">💡</span> <strong>"cip_value":</strong> Valor fixo da Contribuição de Iluminação Pública (R$).</li>
+                            <li><span class="material-symbols-placeholder">💡</span> <strong>"cip_value":</strong> Valor fixo mensal do CIP (R$/mês).</li>
                             <li><span class="material-symbols-placeholder">💰</span> <strong>"icms_rate":</strong> Alíquota do ICMS (Imposto Estadual) em porcentagem (Ex: 18).</li>
-                            <li><span class="material-symbols-placeholder">💰</span> <strong>"pis_cofins_rate":</strong> Alíquota combinada de PIS/COFINS (Impostos Federais) em porcentagem (Ex: 5.96).</li>
+                            <li><span class="material-symbols-placeholder">✅</span> <strong>"icms_isento":</strong> Se há isenção de ICMS (true/false).</li>
+                            <li><span class="material-symbols-placeholder">💰</span> <strong>"pis_cofins_rate":</strong> Alíquota combinada de PIS/COFINS (Impostos Federais) em porcentagem (Ex: 6.13).</li>
+                            <li><span class="material-symbols-placeholder">✅</span> <strong>"pis_cofins_isento":</strong> Se PIS/COFINS já estão embutidos nas tarifas (true/false).</li>
                         </ul>
                         
                         <h6 class="mt-4 fw-bold">Exemplo de um Item em <code class="text-danger">"aparelhos"</code>: </h6>
@@ -517,8 +562,9 @@
                             </dd>
                             
                             <dt class="col-sm-4">Dias de Uso/Mês</dt>
-                            <dd class="col-sm-8">Quantos dias no mês o aparelho é usado<br>
+                            <dd class="col-sm-8">Quantos dias no mês o aparelho é usado (1 a 40 dias)<br>
                                 <em>• Aparelhos que ficam ligados sempre: 30 dias<br>
+                                • Períodos de faturamento especiais: até 40 dias<br>
                                 • Aparelhos sazonais: varie conforme a época<br>
                                 • Aparelhos de uso eventual: estime realisticamente</em>
                             </dd>

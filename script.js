@@ -3,26 +3,28 @@
 // ========================================
 
 const DEFAULT_VALUES = {
-    // Tarifas base (R$/kWh)
-    TUSD_BASE: 0.56068,
-    TE_BASE: 0.37950,
+    // Tarifas base (R$/kWh) - Valores da conta outubro/2025 (mais recente)
+    TUSD_BASE: 0.45893,
+    TE_BASE: 0.30982,
     
     // Bandeira tarifária inicial
     BANDEIRA_INICIAL: 'Verde',
     
-    // Impostos (%)
-    ICMS_RATE: 18,
-    PIS_COFINS_RATE: 5.96,
+    // Impostos (%) - Valores ajustados para situação real
+    ICMS_RATE: 18.00, // Valor nominal, mas com isenção ativada por padrão
+    ICMS_ISENTO: true, // Novo: controla isenção ICMS
+    PIS_COFINS_RATE: 6.13, // Calculado da conta proporcional: 0,53 ÷ (5,14 + 3,47)
+    PIS_COFINS_ISENTO: true, // Novo: controla isenção PIS/COFINS (já embutido nas tarifas)
     
     // CIP (R$ fixo)
-    CIP_VALUE: 15.93,
+    CIP_VALUE: 15.93, // Valor fixo mensal
     
-    // Bandeiras tarifárias (adicional R$/kWh)
+    // Bandeiras tarifárias (adicional R$/kWh) - Valores oficiais ANEEL
     BANDEIRAS: {
         'Verde': 0.00000,
-        'Amarela': 0.02989,
-        'Vermelha P1': 0.06500,
-        'Vermelha P2': 0.07800
+        'Amarela': 0.01885,
+        'Vermelha P1': 0.04463,
+        'Vermelha P2': 0.07877
     }
 };
 
@@ -103,7 +105,9 @@ function getTariffData() {
         bandeira: displayElement.getAttribute('data-label'),
         cip_value: parseFloat(document.getElementById(CIP_VALUE_ID).value) || 0,
         icms_rate: parseFloat(document.getElementById('icms-rate').value) || 0,
-        pis_cofins_rate: parseFloat(document.getElementById('pis-cofins-rate').value) || 0
+        icms_isento: document.getElementById('icms-isento').checked, // Estado da isenção ICMS
+        pis_cofins_rate: parseFloat(document.getElementById('pis-cofins-rate').value) || 0,
+        pis_cofins_isento: document.getElementById('pis-cofins-isento').checked // Estado da isenção PIS/COFINS
     };
 }
 
@@ -114,6 +118,14 @@ function setTariffData(data) {
         document.getElementById(CIP_VALUE_ID).value = data.tarifas.cip_value;
         document.getElementById('icms-rate').value = data.tarifas.icms_rate;
         document.getElementById('pis-cofins-rate').value = data.tarifas.pis_cofins_rate;
+
+        // Carrega o estado dos checkboxes
+        if (typeof data.tarifas.icms_isento !== 'undefined') {
+            document.getElementById('icms-isento').checked = data.tarifas.icms_isento;
+        }
+        if (typeof data.tarifas.pis_cofins_isento !== 'undefined') {
+            document.getElementById('pis-cofins-isento').checked = data.tarifas.pis_cofins_isento;
+        }
 
         const bandeiraName = data.tarifas.bandeira || "Verde"; // Default to Verde
         
@@ -152,19 +164,22 @@ function calculateUnitCost() {
     const icmsRate = (parseFloat(document.getElementById('icms-rate').value) || 0) / 100;
     const pisCofinsRate = (parseFloat(document.getElementById('pis-cofins-rate').value) || 0) / 100;
     
-    // 1. Custo Base Líquido (TUSD + TE)
+    // Verifica se há isenção de impostos
+    const icmsExempt = document.getElementById('icms-isento').checked;
+    const pisCofinsExempt = document.getElementById('pis-cofins-isento').checked;
+    
+    // 1. Custo Base (TUSD + TE)
     const baseLiquida = tusdBase + teBase; 
     
-    // 2. Custo Total Líquido (Base + Bandeira)
-    const totalLiquido = baseLiquida + bandeiraValue;
-
-    // 3. Custo dos Impostos (PIS/COFINS + ICMS)
-    // Os impostos incidem sobre o valor da TUSD + TE (Tarifa Líquida).
-    const custoPisCofins = baseLiquida * pisCofinsRate;
-    const custoIcms = baseLiquida * icmsRate;
+    // 2. Cálculo dos Impostos (apenas se não isentos)
+    const custoPisCofins = pisCofinsExempt ? 0 : (baseLiquida * pisCofinsRate);
+    const custoIcms = icmsExempt ? 0 : (baseLiquida * icmsRate);
     
-    // 4. Custo Unitário Bruto: Líquido + Impostos e Encargos
-    const unitCostBrute = totalLiquido + custoPisCofins + custoIcms;
+    // 3. Custo Total com Impostos
+    const custoComImpostos = baseLiquida + custoPisCofins + custoIcms;
+    
+    // 4. Adiciona a Bandeira por último (como na conta real)
+    const unitCostBrute = custoComImpostos + bandeiraValue;
 
     return unitCostBrute;
 }
@@ -209,10 +224,13 @@ function loadApplianceData(data) {
         newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" value="${item.kwh_dia || 0.0}" min="0" step="0.001" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
         // Days/month
-        newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" value="${item.dias_mes || 30}" min="1" max="31" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
+        newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" value="${item.dias_mes || 30}" min="1" max="40" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
         // kWh/month (Output)
         newRow.insertCell().innerHTML = `<span id="kwh-month-${applianceCount}" class="d-block text-center p-2 text-secondary fw-bold">0,00</span>`;
+
+        // Bandeira (Output)
+        newRow.insertCell().innerHTML = `<span id="bandeira-month-${applianceCount}" class="d-block text-center p-2 text-secondary fw-bold">R$ 0,00</span>`;
 
         // Cost (Output)
         const costCell = newRow.insertCell();
@@ -252,10 +270,13 @@ function addRow() {
     newRow.insertCell().innerHTML = `<input type="number" id="kwh-day-${applianceCount}" placeholder="${item.kwh_dia}" min="0" step="0.001" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
     // Days/month
-    newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" placeholder="${item.dias_mes}" min="1" max="31" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
+    newRow.insertCell().innerHTML = `<input type="number" id="days-month-${applianceCount}" placeholder="${item.dias_mes}" min="1" max="40" oninput="calculateRow(${applianceCount})" class="form-control form-control-sm border-0 text-center p-2 placeholder-color">`;
 
     // kWh/month (Output)
     newRow.insertCell().innerHTML = `<span id="kwh-month-${applianceCount}" class="d-block text-center p-2 text-secondary fw-bold">0,00</span>`;
+
+    // Bandeira (Output)
+    newRow.insertCell().innerHTML = `<span id="bandeira-month-${applianceCount}" class="d-block text-center p-2 text-secondary fw-bold">R$ 0,00</span>`;
 
     // Cost (Output)
     const costCell = newRow.insertCell();
@@ -282,6 +303,7 @@ function calculateRow(id) {
     const kwhDayInput = document.getElementById(`kwh-day-${id}`);
     const daysMonthInput = document.getElementById(`days-month-${id}`);
     const kwhMonthSpan = document.getElementById(`kwh-month-${id}`);
+    const bandeiraMonthSpan = document.getElementById(`bandeira-month-${id}`);
     const costMonthSpan = document.getElementById(`cost-month-${id}`);
 
     if (!kwhDayInput || !daysMonthInput) return; // Skip if row removed
@@ -291,10 +313,19 @@ function calculateRow(id) {
     const daysMonth = parseInt(daysMonthInput.value) || 0;
     const unitCost = calculateUnitCost();
 
+    // Pega o valor da bandeira atual
+    const bandeiraValue = parseFloat(document.getElementById('bandeira-select-display').getAttribute('data-value')) || 0;
+
+    // Cálculos
     const kwhMonth = kwhDay * daysMonth;
+    const bandeiraMonth = kwhMonth * bandeiraValue; // Bandeira = kWh/mês * valor da bandeira
+    
+    // Custo individual SEM CIP (CIP será adicionado apenas no total final)
     const costMonth = kwhMonth * unitCost;
 
+    // Atualiza os campos
     kwhMonthSpan.textContent = kwhMonth.toFixed(3).replace('.', ',');
+    bandeiraMonthSpan.textContent = `R$ ${bandeiraMonth.toFixed(2).replace('.', ',')}`;
     costMonthSpan.textContent = `R$ ${costMonth.toFixed(2).replace('.', ',')}`;
 
     updateTotalSummary();
@@ -312,13 +343,14 @@ function updateAllApplianceCosts() {
 
 function updateTotalSummary() {
     let totalKwh = 0;
+    let totalBandeira = 0;
     let totalCost = 0;
     let totalKwhDay = 0;
-    const cipValue = parseFloat(document.getElementById(CIP_VALUE_ID).value) || 0;
 
     for (let i = 1; i <= applianceCount; i++) {
         const kwhDayInput = document.getElementById(`kwh-day-${i}`); 
         const kwhMonthSpan = document.getElementById(`kwh-month-${i}`);
+        const bandeiraMonthSpan = document.getElementById(`bandeira-month-${i}`);
         const costMonthSpan = document.getElementById(`cost-month-${i}`);
 
         if (kwhDayInput && kwhMonthSpan && costMonthSpan) {
@@ -326,23 +358,28 @@ function updateTotalSummary() {
             const kwhDay = parseFloat(kwhDayInput.value.replace(',', '.')) || 0;
             totalKwhDay += kwhDay;
             
-            // Cálculo kWh/mês e Custo total:
+            // Cálculo dos totais (SEM incluir CIP individual):
             const kwh = parseFloat(kwhMonthSpan.textContent.replace(',', '.')) || 0;
+            const bandeira = parseFloat(bandeiraMonthSpan?.textContent.replace('R$ ', '').replace(',', '.')) || 0;
             const costText = costMonthSpan.textContent.replace('R$ ', '').replace(',', '.');
             const cost = parseFloat(costText) || 0;
             
             totalKwh += kwh;
+            totalBandeira += bandeira;
             totalCost += cost;
         }
     }
 
-    const finalCost = totalCost + cipValue;
+    // CIP aplicado apenas UMA VEZ no total final (valor fixo)
+    const cipValue = parseFloat(document.getElementById('cip-value').value) || 0;
+    
+    const finalCostWithCip = totalCost + cipValue;
 
-    // Atualiza o novo campo de Consumo Diário
+    // Atualiza os campos de resumo
     document.getElementById('total-kwh-day').innerHTML = `${totalKwhDay.toFixed(3).replace('.', ',')}`;
     document.getElementById('total-kwh').innerHTML = `${totalKwh.toFixed(3).replace('.', ',')}`;
     document.getElementById('total-cost').innerHTML = `<b>R$ ${totalCost.toFixed(2).replace('.', ',')}</b>`;
-    document.getElementById('final-cost').innerHTML = `<b>R$ ${finalCost.toFixed(2).replace('.', ',')}</b>`;
+    document.getElementById('final-cost').innerHTML = `<b>R$ ${finalCostWithCip.toFixed(2).replace('.', ',')}</b>`;
     document.getElementById('final-cip').innerHTML = cipValue.toFixed(2).replace('.', ',');
 }
 
@@ -365,8 +402,11 @@ function downloadTemplate() {
             "te_base": DEFAULT_VALUES.TE_BASE,
             "bandeira": "Vermelha P2", 
             "cip_value": DEFAULT_VALUES.CIP_VALUE,
+            "cip_max": DEFAULT_VALUES.CIP_MAX,
             "icms_rate": DEFAULT_VALUES.ICMS_RATE,
-            "pis_cofins_rate": DEFAULT_VALUES.PIS_COFINS_RATE
+            "icms_isento": DEFAULT_VALUES.ICMS_ISENTO,
+            "pis_cofins_rate": DEFAULT_VALUES.PIS_COFINS_RATE,
+            "pis_cofins_isento": DEFAULT_VALUES.PIS_COFINS_ISENTO
         },
         "aparelhos": [
             {
@@ -549,6 +589,10 @@ function initializeDefaultValues() {
     document.getElementById(CIP_VALUE_ID).value = DEFAULT_VALUES.CIP_VALUE;
     document.getElementById('icms-rate').value = DEFAULT_VALUES.ICMS_RATE;
     document.getElementById('pis-cofins-rate').value = DEFAULT_VALUES.PIS_COFINS_RATE;
+    
+    // Ativa as isenções por padrão
+    document.getElementById('icms-isento').checked = DEFAULT_VALUES.ICMS_ISENTO || false;
+    document.getElementById('pis-cofins-isento').checked = DEFAULT_VALUES.PIS_COFINS_ISENTO || false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
