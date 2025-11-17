@@ -278,24 +278,39 @@
                 </h2>
                 <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFatura">
                     <div class="accordion-body">
-                        <p class="mb-3">Você encontrará a maioria dos valores na seção **'Descrição do Faturamento'** da sua conta, na coluna **"Preço Unit. (R$/kWh)"**. </p>
+                        <p class="mb-3">Você encontrará a maioria dos valores na seção **'Descrição do Faturamento'** da sua conta, na coluna **"Preço Unit (R$) com tributos"**. </p>
                         
-                        <h6 class="fw-semibold mt-3">Tarifas Base </h6>
+                        <!-- IMPORTANTE: Explicação sobre Preço com Tributos -->
+                        <div class="alert alert-primary small mb-4">
+                            <span class="material-symbols-placeholder">ℹ️</span> <strong>Importante:</strong> Os valores na coluna "Preço unit (R$) com tributos" <strong>JÁ INCLUEM</strong> ICMS e PIS/COFINS. Por isso, por padrão, marcamos as opções "Isento" na calculadora. Se você quiser inserir os percentuais dos impostos separadamente (caso tenha esses dados isolados), desmarque as opções e preencha os campos de percentual.
+                        </div>
+                        
+                        <h6 class="fw-semibold mt-3">Tarifas Base - Como Extrair da Fatura 📊</h6>
+                        <div class="alert alert-success small mb-3">
+                            <span class="material-symbols-placeholder">👆</span> <strong>Passo a Passo:</strong> Na sua fatura, localize a coluna <strong>"Preço unit (R$) com tributos"</strong> e copie os valores das linhas TUSD e TE para os campos correspondentes na calculadora.
+                        </div>
+                        
                         <ul class="list-group list-group-flush small mb-3">
                             <li class="list-group-item">
-                                <strong>TUSD (R$/kWh):</strong> Tarifa de Uso do Sistema de Distribuição. 
+                                <strong>TUSD Base (R$/kWh):</strong> Tarifa de Uso do Sistema de Distribuição. 
                                 É o custo cobrado pela distribuidora (Enel) pelo **uso da rede** e equipamentos (postes, cabos, transformadores) que trazem a energia até sua casa. É o custo do **transporte**.
-                                <span class="badge text-bg-info ms-2">Linha: USO SIST. DISTR. (TUSD)</span>
+                                <div class="mt-2">
+                                    <span class="badge text-bg-info me-2">Linha: USO SIST. DISTR. (TUSD)</span>
+                                    <span class="badge text-bg-success">📋 Copie o valor da coluna "com tributos"</span>
+                                </div>
                             </li>
                             <li class="list-group-item">
-                                <strong>TE (R$/kWh):</strong> Tarifa de Energia.
+                                <strong>TE Base (R$/kWh):</strong> Tarifa de Energia.
                                 É o custo referente ao **insumo energia** em si, ou seja, o valor que você paga pelo kWh gerado nas usinas. É o custo da **compra da energia**.
-                                <span class="badge text-bg-info ms-2">Linha: ENERGIA (TE)</span>
+                                <div class="mt-2">
+                                    <span class="badge text-bg-info me-2">Linha: ENERGIA (TE)</span>
+                                    <span class="badge text-bg-success">📋 Copie o valor da coluna "com tributos"</span>
+                                </div>
                             </li>
                         </ul>
                         
                         <h6 class="fw-semibold mt-3">Adicional Bandeira 🚦</h6>
-                        <p class="small">Valor adicional por kWh na linha **ADIC BANDEIRA [Cor]**. É um custo extra determinado pela ANEEL, refletindo o custo de geração de energia no país. Escolha a bandeira vigente no seletor da Aba 1.</p>
+                        <p class="small">Valor adicional por kWh na linha **ADIC BANDEIRA [Cor]**. É um custo extra determinado pela ENEL, refletindo o custo de geração de energia no país. Escolha a bandeira vigente no seletor da Aba 1.</p>
                         
                         <!-- TABELA DE BANDEIRAS -->
                         <div class="table-responsive mb-3">
@@ -303,7 +318,7 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Bandeira</th>
-                                        <th>Condição e Acréscimo (ANEEL)</th>
+                                        <th>Condição e Acréscimo (ENEL)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -330,28 +345,34 @@
                         <!-- FIM TABELA E LINK -->
                         
                         <h6 class="fw-semibold mt-3">Impostos (%)</h6>
+                        <div class="alert alert-info small mb-3">
+                            <span class="material-symbols-placeholder">💡</span> <strong>Configuração Recomendada:</strong> Como os valores TUSD e TE da coluna "Preço unit (R$) com tributos" já incluem os impostos, mantenha as opções "Isento" marcadas. Use os campos de percentual apenas se você tiver os valores base sem impostos e quiser calculá-los separadamente.
+                        </div>
+                        
                         <ul class="list-group list-group-flush small mb-3">
                             <li class="list-group-item">
                                 <strong>ICMS:</strong> Imposto Estadual. A alíquota é encontrada na coluna **Alíquota (%)**. Varia conforme o consumo total da residência (ex: 18% para consumo acima de 200 kWh).
                                 <div class="alert alert-warning small mt-2 mb-0">
-                                    <strong>⚠️ Importante:</strong> Se sua conta mostra "ICMS R$ 0,00" ou valor zerado, você tem <strong>isenção de ICMS</strong>. Marque o checkbox "Isenção de ICMS" na calculadora.
+                                    <strong>⚠️ Cenários de Uso:</strong><br>
+                                    • <strong>Mantenha "Isento" marcado:</strong> Se usar valores da coluna "com tributos" (recomendado)<br>
+                                    • <strong>Desmarque "Isento":</strong> Apenas se tiver valores base sem impostos e quiser aplicar o percentual
                                 </div>
                             </li>
                             <li class="list-group-item">
-                                <strong>PIS/COFINS:</strong> Impostos Federais. Use a alíquota efetiva combinada mostrada na coluna **Alíquota (%)**. Se você tem isenção de ICMS, geralmente estes impostos também são zerados.
+                                <strong>PIS/COFINS:</strong> Impostos Federais. Use a alíquota efetiva combinada mostrada na coluna **Alíquota (%)**. Mesma lógica do ICMS - mantenha "Isento" se usando valores "com tributos".
                             </li>
                         </ul>
 
-                        <h6 class="fw-semibold mt-3">🆓 Como Identificar Isenção de ICMS:</h6>
+                        <h6 class="fw-semibold mt-3">🆓 Casos Especiais de Isenção Real:</h6>
                         <div class="bg-light p-3 rounded mb-3">
-                            <p class="small mb-2"><strong>Verifique na sua conta:</strong></p>
+                            <p class="small mb-2"><strong>Desmarque "Isento" APENAS se você tem isenção real na conta:</strong></p>
                             <ul class="small mb-2">
-                                <li>Valor do ICMS aparece como <strong>R$ 0,00</strong></li>
-                                <li>Pode haver uma linha com "DESC. ICMS" (desconto de ICMS)</li>
-                                <li>PIS/COFINS também podem estar zerados</li>
-                                <li>Total da conta = TUSD + TE + Bandeiras + CIP (sem impostos)</li>
+                                <li>Valor do ICMS aparece como <strong>R$ 0,00</strong> na fatura</li>
+                                <li>Linha com "DESC. ICMS" (desconto de ICMS)</li>
+                                <li>PIS/COFINS também zerados</li>
+                                <li>Você possui certificação de baixa renda ou outra isenção oficial</li>
                             </ul>
-                            <p class="small mb-0 text-success"><strong>✅ Se encontrar estes sinais, ative o checkbox "Isenção de ICMS" na calculadora!</strong></p>
+                            <p class="small mb-0 text-warning"><strong>⚠️ Na maioria dos casos, use os valores "com tributos" e mantenha "Isento" marcado!</strong></p>
                         </div>
 
                          <h6 class="fw-semibold mt-3">CIP (R$ Fixo) 🏙️</h6>

@@ -19,7 +19,7 @@ const DEFAULT_VALUES = {
     // CIP (R$ fixo)
     CIP_VALUE: 15.93, // Valor fixo mensal
     
-    // Bandeiras tarifárias (adicional R$/kWh) - Valores oficiais ANEEL
+    // Bandeiras tarifárias (adicional R$/kWh) - Valores oficiais ENEL
     BANDEIRAS: {
         'Verde': 0.00000,
         'Amarela': 0.01885,
