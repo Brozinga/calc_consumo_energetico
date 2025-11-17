@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de custo de energia com impostos e tarifas reais da Enel">
+    <title>Calculadora de Consumo Energético - Enel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .result-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .result-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
+        }
+
+        .result-total .result-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .result-total .result-value {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .btn-calculate {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Calculadora de Consumo Energético</h1>
+        <p class="subtitle">Calcule seu custo de energia com tarifas reais da Enel</p>
+
+        <form id="calcForm">
+            <div class="form-group">
+                <label for="consumo">Consumo (kWh)</label>
+                <input type="number" id="consumo" placeholder="Ex: 150" min="0" step="0.01" required>
+                <p class="info-text">Digite o consumo em quilowatts-hora</p>
+            </div>
+
+            <div class="form-group">
+                <label for="tarifa">Tarifa por kWh (R$)</label>
+                <input type="number" id="tarifa" value="0.75" min="0" step="0.01" required>
+                <p class="info-text">Tarifa média da Enel (pode variar por região)</p>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo">Tipo de Tarifa</label>
+                <select id="tipo" required>
+                    <option value="residencial">Residencial</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="icms">ICMS (%)</label>
+                <input type="number" id="icms" value="18" min="0" max="100" step="0.01" required>
+                <p class="info-text">Imposto sobre Circulação de Mercadorias e Serviços</p>
+            </div>
+
+            <div class="form-group">
+                <label for="pis">PIS (%)</label>
+                <input type="number" id="pis" value="1.65" min="0" max="100" step="0.01" required>
+                <p class="info-text">Programa de Integração Social</p>
+            </div>
+
+            <div class="form-group">
+                <label for="cofins">COFINS (%)</label>
+                <input type="number" id="cofins" value="7.60" min="0" max="100" step="0.01" required>
+                <p class="info-text">Contribuição para o Financiamento da Seguridade Social</p>
+            </div>
+
+            <button type="submit" class="btn-calculate">Calcular</button>
+        </form>
+
+        <div id="resultado" class="result">
+            <div class="result-item">
+                <span class="result-label">Consumo:</span>
+                <span class="result-value" id="resultConsumo">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Custo Base:</span>
+                <span class="result-value" id="resultBase">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">ICMS:</span>
+                <span class="result-value" id="resultIcms">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">PIS:</span>
+                <span class="result-value" id="resultPis">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">COFINS:</span>
+                <span class="result-value" id="resultCofins">-</span>
+            </div>
+            <div class="result-item result-total">
+                <span class="result-label">Total com Impostos:</span>
+                <span class="result-value" id="resultTotal">-</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Calculadora de Consumo Energético</p>
+            <p>Valores aproximados baseados em tarifas médias da Enel</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calcForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Obter valores do formulário
+            const consumo = parseFloat(document.getElementById('consumo').value);
+            const tarifa = parseFloat(document.getElementById('tarifa').value);
+            const icms = parseFloat(document.getElementById('icms').value);
+            const pis = parseFloat(document.getElementById('pis').value);
+            const cofins = parseFloat(document.getElementById('cofins').value);
+
+            // Calcular custo base
+            const custoBase = consumo * tarifa;
+
+            // Calcular impostos
+            const valorIcms = custoBase * (icms / 100);
+            const valorPis = custoBase * (pis / 100);
+            const valorCofins = custoBase * (cofins / 100);
+
+            // Calcular total
+            const total = custoBase + valorIcms + valorPis + valorCofins;
+
+            // Formatar valores
+            const formatarMoeda = (valor) => {
+                return valor.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+            };
+
+            // Exibir resultados
+            document.getElementById('resultConsumo').textContent = `${consumo.toFixed(2)} kWh`;
+            document.getElementById('resultBase').textContent = formatarMoeda(custoBase);
+            document.getElementById('resultIcms').textContent = formatarMoeda(valorIcms);
+            document.getElementById('resultPis').textContent = formatarMoeda(valorPis);
+            document.getElementById('resultCofins').textContent = formatarMoeda(valorCofins);
+            document.getElementById('resultTotal').textContent = formatarMoeda(total);
+
+            // Mostrar resultado
+            document.getElementById('resultado').classList.add('show');
+
+            // Scroll suave para o resultado
+            document.getElementById('resultado').scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        });
+
+        // Validação em tempo real
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
