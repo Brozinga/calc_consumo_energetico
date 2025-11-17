@@ -384,21 +384,91 @@ function downloadTemplate() {
     downloadJson('template_aparelhos.json', templateData);
 }
 
+function validateDataBeforeDownload() {
+    const errors = [];
+    
+    // 1. Validar campos de Tarifas
+    const tusdBase = parseFloat(document.getElementById('tusd-base').value);
+    const teBase = parseFloat(document.getElementById('te-base').value);
+    const cipValue = parseFloat(document.getElementById('cip-value').value);
+    const icmsRate = parseFloat(document.getElementById('icms-rate').value);
+    const pisCofinsRate = parseFloat(document.getElementById('pis-cofins-rate').value);
+    
+    if (!tusdBase || tusdBase <= 0) {
+        errors.push("• TUSD Base deve estar preenchido e maior que 0");
+    }
+    if (!teBase || teBase <= 0) {
+        errors.push("• TE Base deve estar preenchido e maior que 0");
+    }
+    if (isNaN(cipValue) || cipValue < 0) {
+        errors.push("• CIP deve estar preenchido e não pode ser negativo");
+    }
+    if (!icmsRate || icmsRate < 0 || icmsRate > 100) {
+        errors.push("• ICMS deve estar preenchido e entre 0 e 100%");
+    }
+    if (!pisCofinsRate || pisCofinsRate < 0 || pisCofinsRate > 100) {
+        errors.push("• PIS/COFINS deve estar preenchido e entre 0 e 100%");
+    }
+    
+    // 2. Validar Lista de Aparelhos
+    let hasValidAppliances = false;
+    for (let i = 1; i <= applianceCount; i++) {
+        const row = document.getElementById(`row-${i}`);
+        if (row) {
+            const nomeInput = document.getElementById(`name-${i}`);
+            const kwhDayInput = document.getElementById(`kwh-day-${i}`);
+            const daysMonthInput = document.getElementById(`days-month-${i}`);
+            
+            const nome = nomeInput?.value?.trim();
+            const kwhDay = parseFloat(kwhDayInput?.value?.replace(',', '.')) || 0;
+            const daysMonth = parseInt(daysMonthInput?.value) || 0;
+            
+            if (nome && kwhDay > 0 && daysMonth > 0) {
+                hasValidAppliances = true;
+            } else if (nome || kwhDay > 0 || daysMonth > 0) {
+                // Aparelho parcialmente preenchido
+                errors.push(`• Aparelho "${nome || `Linha ${i}`}": todos os campos devem estar preenchidos`);
+            }
+        }
+    }
+    
+    if (!hasValidAppliances) {
+        errors.push("• Pelo menos um aparelho deve estar completamente preenchido");
+    }
+    
+    return {
+        isValid: errors.length === 0,
+        errors: errors
+    };
+}
+
 function downloadCurrentData() {
+    // Validar dados antes do download
+    const validation = validateDataBeforeDownload();
+    
+    if (!validation.isValid) {
+        const errorMessage = "❌ Não é possível baixar os dados. Corrija os seguintes problemas:\n\n" + validation.errors.join("\n");
+        alert(errorMessage);
+        return;
+    }
+    
     let currentApplianceData = [];
     // Iterar sobre as linhas visíveis na tabela
     for (let i = 1; i <= applianceCount; i++) {
         const row = document.getElementById(`row-${i}`);
         if (row) {
-            const nome = document.getElementById(`name-${i}`).value;
-            const kwh_dia = parseFloat(document.getElementById(`kwh-day-${i}`).value) || 0;
+            const nome = document.getElementById(`name-${i}`).value?.trim();
+            const kwh_dia = parseFloat(document.getElementById(`kwh-day-${i}`).value?.replace(',', '.')) || 0;
             const dias_mes = parseInt(document.getElementById(`days-month-${i}`).value) || 0;
             
-            currentApplianceData.push({
-                nome: nome,
-                kwh_dia: kwh_dia,
-                dias_mes: dias_mes
-            });
+            // Só adiciona aparelhos que estão completamente preenchidos
+            if (nome && kwh_dia > 0 && dias_mes > 0) {
+                currentApplianceData.push({
+                    nome: nome,
+                    kwh_dia: kwh_dia,
+                    dias_mes: dias_mes
+                });
+            }
         }
     }
     
@@ -409,6 +479,9 @@ function downloadCurrentData() {
     };
 
     downloadJson('dados_aparelhos_exportados.json', fullData);
+    
+    // Mensagem de sucesso
+    alert(`✅ Dados exportados com sucesso!\n\n📊 Tarifas: Configuradas\n🏠 Aparelhos: ${currentApplianceData.length} item(ns)`);
 }
 
 function handleFileUpload() {
