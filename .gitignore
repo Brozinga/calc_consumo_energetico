@@ -1,0 +1,64 @@
+# Arquivos do Sistema Operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Arquivos de Editor/IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Dependências (caso adicione Node.js no futuro)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Dados Locais de Teste
+dados_teste_*.json
+backup_*.json
+dados_pessoais_*.json
+
+# Arquivos Temporários
+*.tmp
+*.temp
+.cache/
+dist/
+build/
+
+# Arquivos de Backup
+*.bak
+*.backup
+*~
+
+# Variáveis de Ambiente
+.env
+.env.local
+.env.*.local
+
+# Coverage e Testes (caso adicione no futuro)
+coverage/
+.nyc_output/
+*.lcov
+
+# Arquivos de Deploy (caso use em produção)
+.vercel
+.netlify

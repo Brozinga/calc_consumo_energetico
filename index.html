@@ -3,326 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calculadora de custo de energia com impostos e tarifas reais da Enel">
-    <title>Calculadora de Consumo Energético - Enel</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="number"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .info-text {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .btn-calculate {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-calculate:active {
-            transform: translateY(0);
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            display: none;
-        }
-
-        .result.show {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-label {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .result-value {
-            color: #333;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .result-total {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #667eea;
-        }
-
-        .result-total .result-label {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .result-total .result-value {
-            font-size: 24px;
-            color: #667eea;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #999;
-            font-size: 12px;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .btn-calculate {
-                font-size: 16px;
-            }
-        }
-    </style>
+    <title>Calculadora de Custo de Energia - Enel SP</title>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <h1>⚡ Calculadora de Consumo Energético</h1>
-        <p class="subtitle">Calcule seu custo de energia com tarifas reais da Enel</p>
+<body class="container p-4 p-md-5">
 
-        <form id="calcForm">
-            <div class="form-group">
-                <label for="consumo">Consumo (kWh)</label>
-                <input type="number" id="consumo" placeholder="Ex: 150" min="0" step="0.01" required>
-                <p class="info-text">Digite o consumo em quilowatts-hora</p>
-            </div>
+<div class="bg-white rounded-3 shadow-lg mx-auto overflow-hidden">
+    <header class="bg-primary text-white p-4">
+        <h1 class="h4 fw-bold">Calculadora de Consumo Elétrico</h1>
+        <p class="mb-0 small opacity-75">Calculadora aproximada de consumo energético de aparelhos (valor na conta de luz).</p>
+    </header>
 
-            <div class="form-group">
-                <label for="tarifa">Tarifa por kWh (R$)</label>
-                <input type="number" id="tarifa" value="0.75" min="0" step="0.01" required>
-                <p class="info-text">Tarifa média da Enel (pode variar por região)</p>
-            </div>
-
-            <div class="form-group">
-                <label for="tipo">Tipo de Tarifa</label>
-                <select id="tipo" required>
-                    <option value="residencial">Residencial</option>
-                    <option value="comercial">Comercial</option>
-                    <option value="industrial">Industrial</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="icms">ICMS (%)</label>
-                <input type="number" id="icms" value="18" min="0" max="100" step="0.01" required>
-                <p class="info-text">Imposto sobre Circulação de Mercadorias e Serviços</p>
-            </div>
-
-            <div class="form-group">
-                <label for="pis">PIS (%)</label>
-                <input type="number" id="pis" value="1.65" min="0" max="100" step="0.01" required>
-                <p class="info-text">Programa de Integração Social</p>
-            </div>
-
-            <div class="form-group">
-                <label for="cofins">COFINS (%)</label>
-                <input type="number" id="cofins" value="7.60" min="0" max="100" step="0.01" required>
-                <p class="info-text">Contribuição para o Financiamento da Seguridade Social</p>
-            </div>
-
-            <button type="submit" class="btn-calculate">Calcular</button>
-        </form>
-
-        <div id="resultado" class="result">
-            <div class="result-item">
-                <span class="result-label">Consumo:</span>
-                <span class="result-value" id="resultConsumo">-</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Custo Base:</span>
-                <span class="result-value" id="resultBase">-</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">ICMS:</span>
-                <span class="result-value" id="resultIcms">-</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">PIS:</span>
-                <span class="result-value" id="resultPis">-</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">COFINS:</span>
-                <span class="result-value" id="resultCofins">-</span>
-            </div>
-            <div class="result-item result-total">
-                <span class="result-label">Total com Impostos:</span>
-                <span class="result-value" id="resultTotal">-</span>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>© 2024 Calculadora de Consumo Energético</p>
-            <p>Valores aproximados baseados em tarifas médias da Enel</p>
-        </div>
+    <!-- Navigation Tabs -->
+    <div class="d-flex border-bottom border-secondary-subtle full-width-section">
+        <button id="tab1-btn" onclick="showTab('tab1')" class="tab-button flex-grow-1 p-3 text-center text-secondary active-tab border-0">
+            1. Calculadora de Aparelhos
+        </button>
+        <button id="tab2-btn" onclick="showTab('tab2')" class="tab-button flex-grow-1 p-3 text-center text-secondary border-0">
+            2. Conversor Watts ➔ kWh
+        </button>
+        <button id="tab3-btn" onclick="showTab('tab3')" class="tab-button flex-grow-1 p-3 text-center text-secondary border-0">
+            3. Guia de Uso
+        </button>
     </div>
 
-    <script>
-        document.getElementById('calcForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    <!-- TAB 1: Monthly Consumption Calculator -->
+    <div id="tab1" class="p-4 p-md-5">
+        
+        <!-- Tariffs and Configuration (Settings) -->
+        <div class="bg-light p-4 rounded border border-primary-subtle shadow-sm mb-4">
+            <h2 class="h5 fw-semibold text-primary mb-3">Configuração de Tarifas (Seu Faturamento)</h2>
+            <p class="small text-muted mb-4">Valores extraídos da fatura em 10/2025.</p>
+            
+            <div class="row g-3 small">
+                <!-- TUSD & TE Base -->
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary">TUSD Base (R$/kWh):</label>
+                    <input type="number" id="tusd-base" step="0.00001" oninput="updateTariff()" class="form-control form-control-sm">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary">TE Base (R$/kWh):</label>
+                    <input type="number" id="te-base" step="0.00001" oninput="updateTariff()" class="form-control form-control-sm">
+                </div>
 
-            // Obter valores do formulário
-            const consumo = parseFloat(document.getElementById('consumo').value);
-            const tarifa = parseFloat(document.getElementById('tarifa').value);
-            const icms = parseFloat(document.getElementById('icms').value);
-            const pis = parseFloat(document.getElementById('pis').value);
-            const cofins = parseFloat(document.getElementById('cofins').value);
+                <!-- Bandeira (Dropwdown do Bootstrap - ESTILO CORRIGIDO) -->
+                <div class="col-12 col-md-3">
+                    <label for="bandeira-select-display" class="form-label fw-medium text-secondary">Bandeira Atual:</label>
+                    
+                    <div class="dropdown" id="bandeira-dropdown">
+                        <!-- Botão com estilo de SELECT - Fundo branco e borda sutil -->
+                        <button class="btn btn-light text-dark border-secondary-subtle btn-sm w-100 text-start" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="bandeira-select-display"
+                            data-value="0.00000" data-label="Verde">
+                            <!-- Conteúdo inicial do botão será preenchido via JS (Verde) -->
+                        </button>
+                        <!-- Ícone de seta fixo -->
+                        <span class="dropdown-toggle-icon">▼</span>
+                        
+                        <ul class="dropdown-menu w-100" aria-labelledby="bandeira-select-display" id="bandeira-select-menu">
+                            <li><a class="dropdown-item" href="#" data-value="0.00000" data-label="Verde" data-color="bg-success" onclick="selectBandeira(this, event)">
+                                <span><span class="flag-indicator bg-success me-2"></span> Verde</span>
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" data-value="0.02989" data-label="Amarela" data-color="bg-warning" onclick="selectBandeira(this, event)">
+                                <span><span class="flag-indicator bg-warning me-2"></span> Amarela</span>
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" data-value="0.06500" data-label="Vermelha P1" data-color="bg-danger" onclick="selectBandeira(this, event)">
+                                <span><span class="flag-indicator bg-danger me-2"></span> Vermelha P1</span>
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" data-value="0.07800" data-label="Vermelha P2" data-color="bg-danger" onclick="selectBandeira(this, event)">
+                                <span><span class="flag-indicator bg-danger me-2"></span> Vermelha P2</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <!-- Campo de Adicional -->
+                    <span class="d-block text-muted mt-1" id="bandeira-info">Adicional: R$ 0,00000</span>
+                </div>
+                
+                <!-- CIP and Impostos (NOW EDITABLE) -->
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary">CIP (R$ fixo):</label>
+                    <input type="number" id="cip-value" class="form-control form-control-sm">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary">ICMS (%):</label>
+                    <input type="number" id="icms-rate" step="0.01" oninput="updateTariff()" class="form-control form-control-sm">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary">PIS/COFINS (%):</label>
+                    <input type="number" id="pis-cofins-rate" step="0.01" oninput="updateTariff()" class="form-control form-control-sm">
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <p class="h6 fw-bold text-success">Custo Unitário Bruto Atualizado (R$/kWh): <span id="unit-cost">R$ 1,2435</span></p>
+                <p class="small text-muted">Valor que inclui TUSD, TE, Adicional Bandeira (se houver), ICMS e PIS/COFINS.</p>
+            </div>
+        </div>
 
-            // Calcular custo base
-            const custoBase = consumo * tarifa;
+        <!-- Data Import/Export Buttons (Customizado) -->
+        <div class="bg-light p-4 rounded border border-secondary-subtle shadow-sm mb-4">
+            <h3 class="h6 fw-semibold text-secondary mb-3">Configuração de Dados (JSON)</h3>
+            <div class="d-flex flex-wrap gap-3">
+                
+                <!-- Botão 1: Download Template -->
+                <button onclick="downloadTemplate()" class="btn btn-warning btn-sm flex-grow-1 fw-medium shadow-sm">
+                    <span class="material-symbols-placeholder">📄</span> Baixar Exemplo
+                </button>
 
-            // Calcular impostos
-            const valorIcms = custoBase * (icms / 100);
-            const valorPis = custoBase * (pis / 100);
-            const valorCofins = custoBase * (cofins / 100);
+                <!-- Botão 2: Upload Data -->
+                <input type="file" id="file-input" accept=".json" onchange="handleFileUpload()">
+                <button onclick="document.getElementById('file-input').click()" class="btn btn-secondary btn-sm flex-grow-1 fw-medium shadow-sm">
+                    <span class="material-symbols-placeholder">⬆️</span> Carregar
+                </button>
 
-            // Calcular total
-            const total = custoBase + valorIcms + valorPis + valorCofins;
+                <!-- Botão 3: Download Current Data -->
+                <button onclick="downloadCurrentData()" class="btn btn-primary btn-sm flex-grow-1 fw-medium shadow-sm">
+                    <span class="material-symbols-placeholder">⬇️</span> Baixar Dados Atuais
+                </button>
+            </div>
+        </div>
+        
+        <!-- Appliance List -->
+        <h2 class="h5 fw-semibold text-primary">Lista de Aparelhos para Cálculo Mensal</h2>
+        
+        <div class="table-responsive table-responsive-scroll">
+            <table class="table table-striped table-hover small bg-white rounded-3 shadow">
+                <thead class="table-primary sticky-top" style="top: -1px;">
+                    <tr>
+                        <th class="p-3 text-start col-aparelho">Aparelho</th>
+                        <th class="p-3 text-center col-kwh-dia">Consumo (kWh/dia)</th>
+                        <th class="p-3 text-center col-dias-mes">Dias/Mês</th>
+                        <th class="p-3 text-center col-kwh-mes">kWh/Mês</th>
+                        <th class="p-3 text-center col-custo">Custo (R$/Mês)</th>
+                    </tr>
+                </thead>
+                <tbody id="appliance-list">
+                    <!-- Linhas de aparelhos serão adicionadas aqui -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="p-3 text-center">
+                            <button onclick="addRow()" class="btn btn-success btn-sm rounded-pill fw-medium shadow-sm">
+                                <span class="material-symbols-placeholder">+</span> Adicionar Aparelho
+                            </button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
-            // Formatar valores
-            const formatarMoeda = (valor) => {
-                return valor.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                });
-            };
+<!-- Monthly Summary -->
+<div class="d-flex justify-content-end pt-4">
+    <div class="w-100 w-md-50 p-4 bg-primary-subtle rounded-3 border border-primary-light">
+        
+        <!-- ITEM: Consumo Médio por Dia (kWh/dia) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 fw-semibold text-secondary">
+            <span>Consumo Médio por Dia (kWh/dia):</span>
+            <span id="total-kwh-day" class="text-secondary fs-5 fw-bold text-md-end">0,00</span>
+        </div>
+        
+        <!-- ITEM: Consumo Total Estimado (kWh) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 fw-semibold text-secondary">
+            <span>Consumo Total Estimado (kWh):</span>
+            <span id="total-kwh" class="text-secondary fs-5 fw-bold text-md-end">0,00</span>
+        </div>
+        
+        <!-- ITEM: Custo Total dos Aparelhos (R$) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 fw-semibold text-secondary">
+            <span>Custo Total dos Aparelhos (R$):</span>
+            <span id="total-cost" class="text-primary fs-5 fw-bold text-md-end">R$ 0,00</span>
+        </div>
+        
+        <hr class="border-primary">
+        
+        <!-- ITEM: Custo Total Estimado c/ CIP (R$) - Destaque Final -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center h5 fw-bold text-primary">
+            <span>Custo Total Estimado c/ CIP (R$):</span>
+            <span id="final-cost" class="text-primary fs-4 fw-bolder text-md-end">R$ 15,93</span>
+        </div>
+        
+        <p class="small text-muted text-end mb-0">CIP de R$ <span id="final-cip">15.93</span> incluso no total.</p>
+    </div>
+</div>
+    </div>
 
-            // Exibir resultados
-            document.getElementById('resultConsumo').textContent = `${consumo.toFixed(2)} kWh`;
-            document.getElementById('resultBase').textContent = formatarMoeda(custoBase);
-            document.getElementById('resultIcms').textContent = formatarMoeda(valorIcms);
-            document.getElementById('resultPis').textContent = formatarMoeda(valorPis);
-            document.getElementById('resultCofins').textContent = formatarMoeda(valorCofins);
-            document.getElementById('resultTotal').textContent = formatarMoeda(total);
+    <!-- TAB 2: Power Converter -->
+    <div id="tab2" class="p-4 p-md-5 d-none">
+        <h2 class="h5 fw-semibold text-primary mb-4">Conversor de Potência (Watts ➔ kWh)</h2>
+        <div class="row g-4 bg-light p-4 rounded border border-primary-subtle shadow-sm">
+            
+            <div class="col-md-6 space-y-4">
+                <div class="col-12 mb-3">
+                    <label for="input-watts" class="form-label fw-medium text-secondary">Potência do Aparelho (Watts - W):</label>
+                    <input type="number" id="input-watts" placeholder="Ex: 1200 (para um secador de cabelo)" oninput="calculateKwh()" class="form-control">
+                    <small class="text-muted d-block mt-1">Geralmente encontrado na etiqueta ou manual do produto (Potência em Watts).</small>
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <label for="input-hours" class="form-label fw-medium text-secondary">Horas de Uso por Dia (h/dia):</label>
+                    <input type="number" id="input-hours" placeholder="Ex: 0.5 (30 minutos)" oninput="calculateKwh()" class="form-control">
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <label for="input-days" class="form-label fw-medium text-secondary">Dias de Uso por Mês:</label>
+                    <input type="number" id="input-days" placeholder="Ex: 30" oninput="calculateKwh()" class="form-control">
+                </div>
+            </div>
 
-            // Mostrar resultado
-            document.getElementById('resultado').classList.add('show');
+            <div class="col-md-6 d-flex flex-column justify-content-center align-items-center">
+                <div class="bg-white p-4 rounded border border-primary-subtle shadow-sm w-100 text-center">
+                    <p class="small fw-medium text-muted mb-2">Consumo Mensal Estimado:</p>
+                    <p class="display-6 fw-bolder text-primary mb-1" id="output-kwh">0,000</p>
+                    <p class="h5 fw-semibold text-secondary">kWh/mês</p>
+                    
+                    <!-- CAMPO: Consumo Diário Estimado -->
+                    <div class="mt-4 pt-4 border-top border-secondary-subtle w-100 text-center">
+                        <p class="small fw-medium text-muted mb-2">Consumo Diário Estimado:</p>
+                        <p class="display-6 fw-bolder text-success mb-1" id="output-kwh-day">0,000</p>
+                        <p class="h5 fw-semibold text-secondary">kWh/dia</p>
+                    </div>
+                    <!-- FIM CAMPO -->
 
-            // Scroll suave para o resultado
-            document.getElementById('resultado').scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
-        });
+                    
+                    <div class="mt-4 pt-4 border-top border-secondary-subtle w-100 text-center">
+                        <p class="small text-muted mb-1">Fórmula utilizada: </p>
+                        <p class="small font-monospace bg-light border d-inline-block px-2 py-1 rounded">
+                            (W * h/dia * dias/mês) / 1000
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TAB 3: Explanation Guide (Guia de Uso) -->
+    <div id="tab3" class="p-4 p-md-5 d-none">
+        <h2 class="h5 fw-semibold text-primary border-bottom pb-2 mb-4">3. Guia de Uso: Entenda a Fatura e os Dados JSON</h2>
+        
+        <p class="mb-4">Esta guia oferece suporte para extrair os dados corretos da sua fatura e para manipular os arquivos de importação/exportação JSON.</p>
+        
 
-        // Validação em tempo real
-        document.querySelectorAll('input[type="number"]').forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.value < 0) {
-                    this.value = 0;
-                }
-            });
-        });
-    </script>
+        <div class="accordion" id="accordionFatura">
+            
+            <!-- SEÇÃO 1: Fatura -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button fw-bold text-blue-700" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <span class="material-symbols-placeholder">🧾</span> 1. Extraindo Valores da Fatura
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFatura">
+                    <div class="accordion-body">
+                        <p class="mb-3">Você encontrará a maioria dos valores na seção **'Descrição do Faturamento'** da sua conta, na coluna **"Preço Unit. (R$/kWh)"**. </p>
+                        
+                        <h6 class="fw-semibold mt-3">Tarifas Base </h6>
+                        <ul class="list-group list-group-flush small mb-3">
+                            <li class="list-group-item">
+                                <strong>TUSD (R$/kWh):</strong> Tarifa de Uso do Sistema de Distribuição. 
+                                É o custo cobrado pela distribuidora (Enel) pelo **uso da rede** e equipamentos (postes, cabos, transformadores) que trazem a energia até sua casa. É o custo do **transporte**.
+                                <span class="badge text-bg-info ms-2">Linha: USO SIST. DISTR. (TUSD)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>TE (R$/kWh):</strong> Tarifa de Energia.
+                                É o custo referente ao **insumo energia** em si, ou seja, o valor que você paga pelo kWh gerado nas usinas. É o custo da **compra da energia**.
+                                <span class="badge text-bg-info ms-2">Linha: ENERGIA (TE)</span>
+                            </li>
+                        </ul>
+                        
+                        <h6 class="fw-semibold mt-3">Adicional Bandeira 🚦</h6>
+                        <p class="small">Valor adicional por kWh na linha **ADIC BANDEIRA [Cor]**. É um custo extra determinado pela ANEEL, refletindo o custo de geração de energia no país. Escolha a bandeira vigente no seletor da Aba 1.</p>
+                        
+                        <!-- TABELA DE BANDEIRAS -->
+                        <div class="table-responsive mb-3">
+                            <table class="table table-sm table-striped small">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Bandeira</th>
+                                        <th>Condição e Acréscimo (ANEEL)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Bandeira Verde</td>
+                                        <td>Condições favoráveis de geração. Sem acréscimo na tarifa.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bandeira Amarela</td>
+                                        <td>Geração menos favorável. Acréscimo de R$ 0,01885 por kWh consumido.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bandeira Vermelha - Patamar 1</td>
+                                        <td>Geração mais custosa. Acréscimo de R$ 0,04463 por kWh consumido.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bandeira Vermelha - Patamar 2</td>
+                                        <td>Geração ainda mais custosa. Acréscimo de R$ 0,07877 por kWh consumido.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="small">Para mais detalhes sobre as bandeiras, consulte a documentação oficial da Enel: <a href="https://www.enel.com.br/pt-saopaulo/midia/news/d2025-7/bandeira-tarifaria-sobe-para-vermelha-patamar-2-em-agosto.html" target="_blank">Documentação Oficial da Enel sobre Bandeiras Tarifárias</a></p>
+                        <!-- FIM TABELA E LINK -->
+                        
+                        <h6 class="fw-semibold mt-3">Impostos (%)</h6>
+                        <ul class="list-group list-group-flush small mb-3">
+                            <li class="list-group-item">
+                                <strong>ICMS:</strong> Imposto Estadual. A alíquota é encontrada na coluna **Alíquota (%)**. Varia conforme o consumo total da residência (ex: 18% para consumo acima de 200 kWh).
+                            </li>
+                            <li class="list-group-item">
+                                <strong>PIS/COFINS:</strong> Impostos Federais. Use a alíquota efetiva combinada mostrada na coluna **Alíquota (%)**.
+                            </li>
+                        </ul>
+
+                         <h6 class="fw-semibold mt-3">CIP (R$ Fixo) 🏙️</h6>
+                        <p class="small">A Contribuição de Iluminação Pública (CIP) é um valor fixo da prefeitura, encontrado na linha **CIP - [SEU MUNICÍPIO]** e adicionado no total final da sua conta. Deve ser inserido no campo "CIP (R$ fixo)".</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 2: JSON (FINALIZADA) -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed fw-bold text-blue-700" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <span class="material-symbols-placeholder">⚙️</span> 2. Estrutura do Arquivo JSON (Importação/Exportação)
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionFatura">
+                    <div class="accordion-body">
+                        <p>O arquivo JSON armazena todas as suas configurações em um formato legível por máquina, dividido em duas chaves principais:</p>
+
+                        <dl class="row mb-3">
+                            <dt class="col-sm-3 text-secondary"><code class="text-danger">"tarifas"</code></dt>
+                            <dd class="col-sm-9">Contém todos os valores fixos (TUSD, TE, Impostos, CIP e Bandeira) que você edita na Aba 1.</dd>
+                            
+                            <dt class="col-sm-3 text-secondary"><code class="text-danger">"aparelhos"</code></dt>
+                            <dd class="col-sm-9">É um array (lista) de objetos, onde cada objeto é um aparelho da sua lista de consumo.</dd>
+                        </dl>
+
+                        <h6 class="mt-4 fw-bold">Exemplo da Estrutura <code class="text-danger">"tarifas"</code>:</h6>
+                        <pre class="bg-light p-2 rounded small"><code>{
+  "tusd_base": 0.56068,
+  "te_base": 0.37950,
+  "bandeira": "Vermelha P2", 
+  "cip_value": 15.93,
+  "icms_rate": 18,
+  "pis_cofins_rate": 5.96
+}</code></pre>
+
+                        <ul class="list-unstyled small">
+                            <li><span class="material-symbols-placeholder">📈</span> <strong>"tusd_base":</strong> Valor da Tarifa de Uso do Sistema de Distribuição (R$/kWh).</li>
+                            <li><span class="material-symbols-placeholder">⚡</span> <strong>"te_base":</strong> Valor da Tarifa de Energia (R$/kWh).</li>
+                            <li><span class="material-symbols-placeholder">🚩</span> <strong>"bandeira":</strong> Nome da bandeira tarifária (Ex: "Verde", "Amarela", "Vermelha P2").</li>
+                            <li><span class="material-symbols-placeholder">💡</span> <strong>"cip_value":</strong> Valor fixo da Contribuição de Iluminação Pública (R$).</li>
+                            <li><span class="material-symbols-placeholder">💰</span> <strong>"icms_rate":</strong> Alíquota do ICMS (Imposto Estadual) em porcentagem (Ex: 18).</li>
+                            <li><span class="material-symbols-placeholder">💰</span> <strong>"pis_cofins_rate":</strong> Alíquota combinada de PIS/COFINS (Impostos Federais) em porcentagem (Ex: 5.96).</li>
+                        </ul>
+                        
+                        <h6 class="mt-4 fw-bold">Exemplo de um Item em <code class="text-danger">"aparelhos"</code>: </h6>
+                        <pre class="bg-light p-2 rounded small"><code>{
+  "nome": "Chuveiro Elétrico",
+  "kwh_dia": 5.0,
+  "dias_mes": 25
+}</code></pre>
+                        <ul class="list-unstyled small">
+                            <li><span class="material-symbols-placeholder">🏷️</span> <strong>"nome":</strong> O nome descritivo do seu aparelho.</li>
+                            <li><span class="material-symbols-placeholder">⚡</span> <strong>"kwh_dia":</strong> O consumo diário (kWh) do aparelho.</li>
+                            <li><span class="material-symbols-placeholder">📅</span> <strong>"dias_mes":</strong> O número de dias no mês que o aparelho é utilizado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JavaScript Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Custom JavaScript -->
+<script src="script.js"></script>
 </body>
 </html>
